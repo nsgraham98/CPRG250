@@ -1,0 +1,80 @@
+SQL> 
+SQL> --drop all the tables (must be in order - child -> parent)
+SQL> drop table ghc_expertise cascade constraints;
+
+Table dropped.
+
+SQL> drop table ghc_faculty cascade constraints;
+
+Table dropped.
+
+SQL> drop table ghc_course cascade constraints;
+
+Table dropped.
+
+SQL> drop table ghc_department cascade constraints;
+
+Table dropped.
+
+SQL> 
+SQL> --create all the tables (parent first then child)
+SQL> -- ghc_department
+SQL> create table ghc_department (
+  2      dept_no NUMBER,
+  3      dept_name NVARCHAR2(20)
+  4  );
+
+Table created.
+
+SQL> alter table ghc_department --creating primary key
+  2      add constraint sys_ghc_department primary key (dept_no);
+
+Table altered.
+
+SQL> alter table ghc_department --creating unique constraint
+  2      add constraint sys_ghc_dept_name_uk unique (dept_name);
+
+Table altered.
+
+SQL> alter table ghc_department --creating NOT NULL constraint
+  2      modify (dept_name NOT NULL);
+
+Table altered.
+
+SQL> 
+SQL> --ghc_course
+SQL> create table ghc_course (
+  2      course_code nchar(7) constraint sys_ghc_course_pk primary key,
+  3      course_title NVARCHAR2(60) NOT NULL,
+  4      credits number(2) not NULL
+  5      constraint sys_ghc_course_credits_ck
+  6      check (credits >= 1 and credits <= 9)
+  7  );
+
+Table created.
+
+SQL> 
+SQL> --ghc_faculty (can do at column level)
+SQL> create table ghc_faculty (
+  2      faculty_id number constraint sys_ghc_faculty_pk primary key,
+  3      surname nvarchar2(50) NOT NULL,
+  4      firstname nvarchar2(50) NOT NULL,
+  5      date_hired date NOT NULL,
+  6      date_fired date,
+  7      is_active NUMBER NOT NULL constraint ghc_faculty_active_ck check (is_active in (0,1)),
+  8      dept_no NUMBER NOT NULL constraint ghc_faculty_dept_fk references ghc_department (dept_no)
+  9  );
+
+Table created.
+
+SQL> --ghc_expertise (can do at column level)
+SQL> create table ghc_expertise (
+  2      faculty_id number references ghc_faculty (faculty_id),
+  3      course_code NCHAR(7) references ghc_course (course_code),
+  4      CONSTRAINT ghc_exp_pk primary key (faculty_id, course_code)
+  5  );
+
+Table created.
+
+SQL> 
+SQL> spool off

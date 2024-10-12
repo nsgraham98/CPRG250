@@ -1,0 +1,142 @@
+SQL> -- Q1 solution
+SQL> INSERT into ghc_department
+  2      VALUES (200, 'Computer Science');
+
+1 row created.
+
+SQL> INSERT into ghc_department
+  2      VALUES (300, 'Mathematics');
+
+1 row created.
+
+SQL> 
+SQL> -- Q2 solution
+SQL> INSERT into ghc_faculty
+  2      VALUES (1001, 'Gosling', 'James', '22-JAN-01', NULL, 1, 200);
+
+1 row created.
+
+SQL> INSERT into ghc_faculty
+  2      VALUES (1002, 'Hajit', 'Mohammed', '24-JAN-01', NULL, 1, 200);
+
+1 row created.
+
+SQL> 
+SQL> -- Q3 solution
+SQL> INSERT into ghc_course
+  2      VALUES('CPSC201', 'Introduction to Programming', 3);
+
+1 row created.
+
+SQL> INSERT into ghc_course
+  2      VALUES ('CPSC302', 'OOP', 5);
+
+1 row created.
+
+SQL> INSERT into ghc_course
+  2      VALUES ('CPSC304', 'Algorithms', 5);
+
+1 row created.
+
+SQL> INSERT into ghc_expertise
+  2      VALUES (1001, 'CPSC201');
+
+1 row created.
+
+SQL> INSERT into ghc_expertise
+  2      VALUES (1001, 'CPSC302');
+
+1 row created.
+
+SQL> INSERT into ghc_expertise
+  2      VALUES (1001, 'CPSC304');
+
+1 row created.
+
+SQL> 
+SQL> -- Q4 solution
+SQL> INSERT into ghc_course
+  2      VALUES ('CPSC402', 'OOP2', 5);
+
+1 row created.
+
+SQL> INSERT into ghc_expertise
+  2      VALUES (1002, 'CPSC201');
+
+1 row created.
+
+SQL> INSERT into ghc_expertise
+  2      VALUES (1002, 'CPSC302');
+
+1 row created.
+
+SQL> INSERT into ghc_expertise
+  2      VALUES (1002, 'CPSC304');
+
+1 row created.
+
+SQL> INSERT into ghc_expertise
+  2      VALUES (1002, 'CPSC402');
+
+1 row created.
+
+SQL> 
+SQL> -- Q5 Script
+SQL> select surname, dept_name, date_hired, course_code
+  2  from ghc_course natural join ghc_expertise natural join
+  3       ghc_faculty natural join ghc_department
+  4  order by 1,4;
+
+SURNAME                                            DEPT_NAME            DATE_HIRE COURSE_                                           
+-------------------------------------------------- -------------------- --------- -------                                           
+Gosling                                            Computer Science     22-JAN-01 CPSC201                                           
+Gosling                                            Computer Science     22-JAN-01 CPSC302                                           
+Gosling                                            Computer Science     22-JAN-01 CPSC304                                           
+Hajit                                              Computer Science     24-JAN-01 CPSC201                                           
+Hajit                                              Computer Science     24-JAN-01 CPSC302                                           
+Hajit                                              Computer Science     24-JAN-01 CPSC304                                           
+Hajit                                              Computer Science     24-JAN-01 CPSC402                                           
+
+7 rows selected.
+
+SQL> 
+SQL> -- Q6 solution
+SQL> UPDATE ghc_course
+  2  SET course_title='Object Oriented Programming', credits=6
+  3  WHERE course_code='CPSC302';
+
+1 row updated.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> -- Q7 solution
+SQL> DELETE ghc_expertise
+  2  WHERE course_code='CPSC304';
+
+2 rows deleted.
+
+SQL> DELETE ghc_course
+  2  WHERE course_code='CPSC304';
+
+1 row deleted.
+
+SQL> 
+SQL> -- Q8 script
+SQL> select course_code, course_title, faculty_id
+  2  from ghc_course natural join ghc_expertise
+  3      natural join ghc_faculty
+  4  order by 1,2;
+
+COURSE_ COURSE_TITLE                                                 FACULTY_ID                                                     
+------- ------------------------------------------------------------ ----------                                                     
+CPSC201 Introduction to Programming                                        1001                                                     
+CPSC201 Introduction to Programming                                        1002                                                     
+CPSC302 Object Oriented Programming                                        1002                                                     
+CPSC302 Object Oriented Programming                                        1001                                                     
+CPSC402 OOP2                                                               1002                                                     
+
+SQL> 
+SQL> spool off
