@@ -1,0 +1,53 @@
+SQL> 
+SQL> -- Q1 - basic select columns with headers
+SQL> select last_name, first_name, agent_id
+  2  from rcv_agent
+  3  where agent_speciality = 'US'
+  4  order by last_name;
+
+LAST_NAME  FIRST_NAME   AGENT_ID                                                                    
+---------- ---------- ----------                                                                    
+Hunt       Ethan               1                                                                    
+Plume      Valerie             4                                                                    
+
+SQL> 
+SQL> 
+SQL> -- COLUMN commands here to set column width and heading
+SQL> -- column xxx format A80 heading "The Heading"
+SQL> set linesize 160
+SQL> column dest_description format A80 heading "Destination Desc."
+SQL> column country format A15
+SQL> column city format A10
+SQL> -- Q2
+SQL> select dest_description, country, state, city, price
+  2  from rcv_destination
+  3  where country in ('Spain', 'France') and price < 100
+  4  order by country, state, city, price;
+
+Destination Desc.                                                                COUNTRY         ST CITY            PRICE                                       
+-------------------------------------------------------------------------------- --------------- -- ---------- ----------                                       
+French Riviera in One Day                                                        France             Nice            89.26                                       
+Nice Small-Group Walking Food Tour with Local Specialties & Wine Tasting         France             Nice            96.13                                       
+French Riviera Famous Cities Scoot Coupe Self Drive Tour from Nice               France             Nice            96.13                                       
+Bateaux Parisiens Seine River Cruise                                             France             Paris           75.75                                       
+Disneyland Paris 1-Day Ticket                                                    France             Paris            76.9                                       
+Sunset Jazz Cruise in Barcelona                                                  Spain              Barcelona       49.95                                       
+Familia Sagrada Guided Tour                                                      Spain              Barcelona       70.03                                       
+Interactive Spanish Cooking Experience in Barcelona                              Spain              Barcelona       72.76                                       
+
+8 rows selected.
+
+SQL> clear columns;
+columns cleared
+SQL> 
+SQL> -- Q3
+SQL> column customer_province format A4 heading "Prov"
+SQL> select first_name "First", last_name "Last", customer_phone "Phone", customer_province
+  2  from rcv_customer
+  3  where customer_phone like '310%'
+  4  order by last_name, first_name;
+
+First                          Last                           Phone        Prov
+------------------------------ ------------------------------ ------------ ----
+Raj                            Koothrappali                   310.285.9002 CA
+Bernadette                     Rostenkowski-Wolowitz          310.285.9000 CA
