@@ -1,0 +1,63 @@
+SQL> 
+SQL> column instructor_name format a20;
+SQL> column course_code format a10;
+SQL> column course_name format a40;
+SQL> column credential_name format a25;
+SQL> 
+SQL> select
+  2  	 i.first_name || ' ' || i.last_name as instructor_name,
+  3  	 sc.course_code,
+  4  	 co.name as course_name,
+  5  	 cr.name as credential_name
+  6  from
+  7  	 sis_instructor i
+  8  join
+  9  	 sis_instructor_course ic on i.instructor_id = ic.instructor_id
+ 10  join
+ 11  	 sis_schedule_course sc on ic.course_registration# = sc.course_registration#
+ 12  				 and ic.semester_code = sc.semester_code
+ 13  join
+ 14  	 sis_course co on sc.course_code = co.course_code
+ 15  join
+ 16  	 sis_course_within_cred cwc on co.course_code = cwc.course_code
+ 17  join
+ 18  	 sis_credential cr on cwc.credential# = cr.credential#
+ 19  order by
+ 20  	 i.instructor_id, co.name;
+
+INSTRUCTOR_NAME      COURSE_COD COURSE_NAME                              CREDENTIAL_NAME                                                              
+-------------------- ---------- ---------------------------------------- -------------------------                                                    
+Tim Berners-Lee      COMP100    Introduction to Computer Science         Computer Programming                                                         
+Tim Berners-Lee      COMP100    Introduction to Computer Science         Computer Programming                                                         
+Tim Berners-Lee      COMP100    Introduction to Computer Science         Web Development                                                              
+Tim Berners-Lee      COMP100    Introduction to Computer Science         Web Development                                                              
+Tim Berners-Lee      COMP100    Introduction to Computer Science         Software Development                                                         
+Tim Berners-Lee      COMP100    Introduction to Computer Science         Software Development                                                         
+Tim Berners-Lee      COMP100    Introduction to Computer Science         Information Technology                                                       
+Tim Berners-Lee      COMP100    Introduction to Computer Science         Information Technology                                                       
+Tim Berners-Lee      COMP303    Machine Learning                         Web Development                                                              
+Tim Berners-Lee      COMP101    Programming Fundamentals                 Computer Programming                                                         
+Tim Berners-Lee      COMP101    Programming Fundamentals                 Web Development                                                              
+Tim Berners-Lee      COMP101    Programming Fundamentals                 Web Development                                                              
+Tim Berners-Lee      COMP101    Programming Fundamentals                 Information Technology                                                       
+Tim Berners-Lee      COMP101    Programming Fundamentals                 Software Development                                                         
+Tim Berners-Lee      COMP101    Programming Fundamentals                 Information Technology                                                       
+Tim Berners-Lee      COMP101    Programming Fundamentals                 Software Development                                                         
+Tim Berners-Lee      COMP101    Programming Fundamentals                 Computer Programming                                                         
+Alan Turing          COMP102    Data Structures                          Web Development                                                              
+Alan Turing          COMP102    Data Structures                          Software Development                                                         
+Alan Turing          COMP202    Database Management Systems              Information Technology                                                       
+Alan Turing          COMP203    Software Engineering                     Software Development                                                         
+Alan Turing          COMP201    Web Development                          Computer Programming                                                         
+Grace Hopper         COMP302    Artificial Intelligence                  Web Development                                                              
+Grace Hopper         COMP301    Computer Networks                        Software Development                                                         
+Grace Hopper         COMP202    Database Management Systems              Information Technology                                                       
+Grace Hopper         COMP204    Operating Systems                        Software Development                                                         
+
+26 rows selected.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> spool off

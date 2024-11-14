@@ -1,0 +1,46 @@
+SQL> 
+SQL> column student_name format a20;
+SQL> column credential_name format a25;
+SQL> column school_name format a20;
+SQL> column course_code format a10;
+SQL> column course_name format a30;
+SQL> column letter_grade format a10;
+SQL> 
+SQL> select
+  2  	 s.first_name || ' ' || s.last_name as student_name,
+  3  	 c.name as credential_name,
+  4  	 c.school as school_name,
+  5  	 cr.course_code,
+  6  	 co.name as course_name,
+  7  	 cr.letter_grade
+  8  from
+  9  	 sis_student s
+ 10  join
+ 11  	 sis_student_credential sc on s.student_id = sc.student_id
+ 12  join
+ 13  	 sis_credential c on sc.credential# = c.credential#
+ 14  join
+ 15  	 sis_student_course_record cr on s.student_id = cr.student_id
+ 16  join
+ 17  	 sis_course co on cr.course_code = co.course_code
+ 18  where
+ 19  	 cr.credential# = sc.credential#
+ 20  order by
+ 21  	 s.student_id, c.name, cr.course_code;
+
+STUDENT_NAME         CREDENTIAL_NAME           SCHOOL_NAME          COURSE_COD COURSE_NAME                    LETTER_GRA                              
+-------------------- ------------------------- -------------------- ---------- ------------------------------ ----------                              
+Alice Johnson        Computer Programming      Southern Alberta Ins COMP100    Introduction to Computer Scien A                                       
+                                               titute of Technology            ce                                                                     
+                                                                                                                                                      
+Bob Smith            Information Technology    Southern Alberta Ins COMP101    Programming Fundamentals       B+                                      
+                                               titute of Technology                                                                                   
+                                                                                                                                                      
+Catherine Li         Computer Programming      Southern Alberta Ins COMP102    Data Structures                A-                                      
+                                               titute of Technology                                                                                   
+                                                                                                                                                      
+
+SQL> 
+SQL> 
+SQL> 
+SQL> spool off

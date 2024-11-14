@@ -21,7 +21,7 @@ column city format A10
 -- Q2 
 select dest_description, country, state, city, price
 from rcv_destination
-where country in ('Spain', 'France') and price < 100
+where country in ('Spain', 'France') and price <= 100
 order by country, state, city, price;
 clear columns;
 
@@ -29,7 +29,7 @@ clear columns;
 column customer_province format A4 heading "Prov"
 select first_name "First", last_name "Last", customer_phone "Phone", customer_province
 from rcv_customer
-where customer_phone like '310%'
+where customer_phone like '310%' and customer_province = 'CA'
 order by last_name, first_name;
 
 spool off

@@ -1,0 +1,149 @@
+SQL> -- Question 1
+SQL> -- Show all the Customers and a unique list of their vacation destinations for non-California customers. Remember is it possible for the customer province to be null if it is a Eurpoean customer. Sort by last name, first name and destination description. (Join using(…))
+
+SQL> break on first_name on last_name;
+SQL> select unique first_name, last_name, customer_province, dest_description
+  2  from rcv_customer c
+  3      join rcv_tour_customer tc using(customer_number)
+  4      join rcv_vacation_tour vt using(tour_code)
+  5      join rcv_tour_destination td using(tour_code)
+  6      join rcv_destination d using(dest_code)
+  7  where not c.customer_province = 'CA' OR c.customer_province IS NULL
+  8  order by 2,1,4,3;
+
+FIRST_NAME      LAST_NAME       CU DEST_DESCRIPTION                                                                                                             
+--------------- --------------- -- ----------------------------------------------------------------------                                                       
+Sheldon         Cooper          NY Bateaux Parisiens Seine River Cruise                                                                                         
+                                NY Calgary City Sightseeing Tour                                                                                                
+                                NY Calgary Stampede - Chuckwagon Races and Grandstand Show                                                                      
+                                NY Calgary Stampede - Day pass Rodeo                                                                                            
+                                NY Disneyland Paris 1-Day Ticket                                                                                                
+                                NY Gourmet Dinner & Sightseeing Cruise                                                                                          
+                                NY Heritage Park - the 1883 experience                                                                                          
+                                NY Skip the Line Ticket: Eiffel Tower Summit Priority Access with Host                                                          
+                                NY Sulfur Mountain Gondola and Banff Hot Springs                                                                                
+Lionel          Messie             2-Hour Horseback Trail Ride in Kananaskis                                                                                    
+                                   Bateaux Parisiens Seine River Cruise                                                                                         
+
+FIRST_NAME      LAST_NAME       CU DEST_DESCRIPTION                                                                                                             
+--------------- --------------- -- ----------------------------------------------------------------------                                                       
+Lionel          Messie             Bateaux Parisiens Seine River Gourmet Dinner & Sightseeing Cruise                                                            
+                                   Calgary City Sightseeing Tour                                                                                                
+                                   Disneyland Paris 1-Day Ticket                                                                                                
+                                   Gourmet Dinner & Sightseeing Cruise                                                                                          
+                                   Normandy D-Day Beaches & American Cemetery Trip from Paris                                                                   
+                                   Rocky Mountaineer - 3 Day Train Adventure                                                                                    
+                                   Skip the Line Ticket: Eiffel Tower Summit Priority Access with Host                                                          
+                                   Sulfur Mountain Gondola and Banff Hot Springs                                                                                
+                                   Voyageur Canoe Tour                                                                                                          
+
+20 rows selected.
+
+SQL> -- Question 2
+SQL> -- Show all destinations that have not been visited by customers. Make the destination column A100 (100 alphanumeric characters wide). Sort by destination.
+SQL> 
+SQL> column dest_description format A100
+SQL> select dest_description "Destination"
+  2  from rcv_destination
+  3  MINUS
+  4  select dest_description
+  5  from rcv_destination
+  6      join rcv_tour_destination using(dest_code)
+  7      join rcv_vacation_tour using(tour_code)
+  8      join rcv_tour_customer using(tour_code)
+  9  order by 1;
+
+Destination                                                                                                                                                     
+----------------------------------------------------------------------------------------------------                                                            
+Blackshale Suspension Bridge & Sightseeing Tour                                                                                                                 
+Calgary to Royal Tyrell Museum | Drumheller | Badland – Private Sightseeing Tour                                                                              
+Cycling the Bow                                                                                                                                                 
+Disneyland 2-Day Park Hopper Ticket                                                                                                                             
+French Riviera Famous Cities Scoot Coupe Self Drive Tour from Nice                                                                                              
+Girona and Dali Museum Small Group Tour with Hotel Pick-up from Barcelona                                                                                       
+Lake Louise & Yoho N.P & Moraine Lake 1-Day Tour from Calgary or Banff                                                                                          
+Modern & More Bike Tours Palm Springs                                                                                                                           
+Private Dolphin and Whale Watching Tour in Newport Beach                                                                                                        
+Private French-Inspired Cooking Class with a Fun Local in Palm Springs, CA                                                                                      
+Private Surf Lesson Newport Beach, California                                                                                                                   
+
+Destination                                                                                                                                                     
+----------------------------------------------------------------------------------------------------                                                            
+Rock climbing at COP                                                                                                                                            
+
+12 rows selected.
+
+SQL> -- Question 3
+SQL> -- Provide a list of Agents and all the vacation tours booked by them, remove any duplicates. Include vacation tours that have yet to be booked by agents. Solve using JOIN...ON. Clear any previous break commands before running this query. Sort by Agent Lastname, Agent Firstname and tour description.
+SQL> 
+SQL> clear breaks;
+breaks cleared
+SQL> select unique a.first_name "Agent", a.last_name "Agent Last",  tour_description, rating_description
+  2  from rcv_agent a join rcv_customer c on (a.agent_id = c.agent_id)
+  3  join rcv_tour_customer tc on (c.customer_number = tc.customer_number)
+  4  right outer join rcv_vacation_tour vt on (tc.tour_code = vt.tour_code)
+  5  join rcv_rating r on (vt.rating_code = r.rating_code)
+  6  order by 2,1,3;
+
+Agent      Agent Last TOUR_DESCRIPTION               RATING_DESCRIPTION                                                                                         
+---------- ---------- ------------------------------ --------------------------------------------------                                                         
+Anna       Chapman    Calgary Highlights             Moderate - a max of 2-3 activites per week                                                                 
+Anna       Chapman    Calgary Stampede               Busy - 3-4 activities per week                                                                             
+Anna       Chapman    European Vacation              Busy - 3-4 activities per week                                                                             
+Anna       Chapman    France in 4 Days               Busy - 3-4 activities per week                                                                             
+Anna       Chapman    Paris Culture Tour             Moderate - a max of 2-3 activites per week                                                                 
+Anna       Chapman    Paris Highlights               Easy - a few activites, leisurely pace                                                                     
+Anna       Chapman    Rocky Mountain Experience      Moderate - a max of 2-3 activites per week                                                                 
+Anna       Chapman    Sights of Barcelona            Moderate - a max of 2-3 activites per week                                                                 
+Ethan      Hunt       Calgary Highlights             Moderate - a max of 2-3 activites per week                                                                 
+Ethan      Hunt       Calgary Stampede               Busy - 3-4 activities per week                                                                             
+Ethan      Hunt       Paris Highlights               Easy - a few activites, leisurely pace                                                                     
+
+Agent      Agent Last TOUR_DESCRIPTION               RATING_DESCRIPTION                                                                                         
+---------- ---------- ------------------------------ --------------------------------------------------                                                         
+Valerie    Plume      Calgary Stampede               Busy - 3-4 activities per week                                                                             
+Valerie    Plume      Palm Springs Adventure         Extreme - lots of high energy activities                                                                   
+Valerie    Plume      Palm Springs Highlights        Moderate - a max of 2-3 activites per week                                                                 
+                      Calgary Adventure              Extreme - lots of high energy activities                                                                   
+
+15 rows selected.
+
+SQL> -- Question 4
+SQL> -- Provide a list of customers and the type of tours they have booked. Remove any duplicates. Solve using JOIN..USING. Sort by Customer lastname, Customer firstname and type of tour.
+SQL> 
+SQL> break on first_name on last_name;
+SQL> select unique c.first_name, c.last_name, rating_description "Rating Description" from rcv_customer c
+  2      join rcv_tour_customer tc using(customer_number)
+  3      join rcv_vacation_tour vt using(tour_code)
+  4      join rcv_rating using(rating_code)
+  5      join rcv_tour_destination using(tour_code)
+  6      join rcv_destination using (dest_code)
+  7  order by 2,1,3;
+
+FIRST_NAME      LAST_NAME       Rating Description                                                                                                              
+--------------- --------------- --------------------------------------------------                                                                              
+Sheldon         Cooper          Busy - 3-4 activities per week                                                                                                  
+                                Easy - a few activites, leisurely pace                                                                                          
+                                Moderate - a max of 2-3 activites per week                                                                                      
+Amy             Folwer          Busy - 3-4 activities per week                                                                                                  
+                                Moderate - a max of 2-3 activites per week                                                                                      
+Penny           Hofstadter      Busy - 3-4 activities per week                                                                                                  
+                                Easy - a few activites, leisurely pace                                                                                          
+                                Moderate - a max of 2-3 activites per week                                                                                      
+Raj             Koothrappali    Busy - 3-4 activities per week                                                                                                  
+                                Extreme - lots of high energy activities                                                                                        
+                                Moderate - a max of 2-3 activites per week                                                                                      
+
+FIRST_NAME      LAST_NAME       Rating Description                                                                                                              
+--------------- --------------- --------------------------------------------------                                                                              
+Lionel          Messie          Easy - a few activites, leisurely pace                                                                                          
+                                Moderate - a max of 2-3 activites per week                                                                                      
+Bernadette      Rostenkowski-Wo Busy - 3-4 activities per week                                                                                                  
+                lowitz                                                                                                                                          
+                                                                                                                                                                
+                                Extreme - lots of high energy activities                                                                                        
+                                Moderate - a max of 2-3 activites per week                                                                                      
+
+16 rows selected.
+
+SQL> spool off

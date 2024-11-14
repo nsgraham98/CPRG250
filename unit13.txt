@@ -1,0 +1,105 @@
+SQL> -- Q1 - b
+SQL> break on "Last" on "First";
+SQL> column "Description" format A20
+SQL> column "Date Completed" format A15
+SQL> column "Expiry Date" format A15
+SQL> select first_name "First", last_name "Last",
+  2      substr(training_description, 1, 20)"Description",
+  3      to_char(date_completed, 'fmMon DD, YYYY') "Date Completed",
+  4      to_char(add_months(date_completed, 5*12), 'fmMon DD, YYYY') "Expiry Date",
+  5      to_char(duration_hours, '9.00') "Hrs"
+  6  from rcv_agent
+  7      join rcv_agent_training using (agent_id)
+  8      join rcv_training using (training_code)
+  9  order by 2,1,3;
+
+First      Last       Description          Date Completed  Expiry Date     Hrs                                                                                  
+---------- ---------- -------------------- --------------- --------------- -----                                                                                
+Anna       Chapman    Building client rela May 8, 2022     May 8, 2027      1.00                                                                                
+                      Customer Relations   May 1, 2022     May 1, 2027      1.00                                                                                
+                      Dealing with difficu Oct 1, 2022     Oct 1, 2027      2.00                                                                                
+                      Touring Europe       Oct 2, 2022     Oct 2, 2027      1.00                                                                                
+Ethan      Hunt       Building client rela May 8, 2022     May 8, 2027      1.00                                                                                
+                      Customer Relations   May 1, 2022     May 1, 2027      1.00                                                                                
+                      Touring the US       Sep 1, 2022     Sep 1, 2027      3.00                                                                                
+Valerie    Plume      Building client rela May 8, 2022     May 8, 2027      1.00                                                                                
+                      Customer Relations   May 1, 2022     May 1, 2027      1.00                                                                                
+                      Dealing with difficu Oct 1, 2022     Oct 1, 2027      2.00                                                                                
+                      Touring the US       Sep 1, 2022     Sep 1, 2027      3.00                                                                                
+
+11 rows selected.
+
+SQL> clear column;
+columns cleared
+SQL> clear breaks;
+breaks cleared
+SQL> -- Q2
+SQL> set linesize 200
+SQL> break on "Country" on "State" on "City" on "Category";
+SQL> column "Country" format A15
+SQL> column "State" format A5
+SQL> column "City" format A15
+SQL> column "Category" format A10
+SQL> column "Destination" format A100
+SQL> column "Price" format A10
+SQL> 
+SQL> select country "Country",
+  2      NVL(state, 'N/A') "State",
+  3      city "City",
+  4      case
+  5          when price <= 50 then 'Budget'
+  6          when price > 50 and price <= 100 then 'Regular'
+  7          when price > 100 then 'Premium'
+  8          end "Category",
+  9      dest_description "Destination",
+ 10      to_char(price, '$999.00' )"Price"
+ 11  from rcv_destination
+ 12  order by 1,2,3,4,6;
+
+Country         State City            Category   Destination                                                                                          Price                                             
+--------------- ----- --------------- ---------- ---------------------------------------------------------------------------------------------------- ----------                                        
+Canada          AB    Banff           Premium    Sulfur Mountain Gondola and Banff Hot Springs                                                         $121.00                                          
+                                      Regular    Voyageur Canoe Tour                                                                                    $63.00                                          
+                      Calgary         Budget     Cycling the Bow                                                                                        $39.94                                          
+                                      Premium    Calgary Stampede - Day pass Rodeo                                                                     $131.00                                          
+                                                 Lake Louise & Yoho N.P & Moraine Lake 1-Day Tour from Calgary or Banff                                $146.32                                          
+                                                 Calgary City Sightseeing Tour                                                                         $214.36                                          
+                                                 Calgary Stampede - Chuckwagon Races and Grandstand Show                                               $251.00                                          
+                                                 Rocky Mountaineer - 3 Day Train Adventure                                                             $570.99                                          
+                                      Regular    Rock climbing at COP                                                                                   $59.95                                          
+                                                 Heritage Park - the 1883 experience                                                                    $79.99                                          
+                      Drumheller      Premium    Calgary to Royal Tyrell Museum | Drumheller | Badland – Private Sightseeing Tour                    $287.99                                          
+                      Kananaskis      Premium    2-Hour Horseback Trail Ride in Kananaskis                                                             $131.25                                          
+                                                 Blackshale Suspension Bridge & Sightseeing Tour                                                       $155.00                                          
+France          N/A   Nice            Premium    Nice Local Vineyards Small Group Half Day E-Bike Tour with Wine Tasting                               $109.86                                          
+                                      Regular    French Riviera in One Day                                                                              $89.26                                          
+                                                 Nice Small-Group Walking Food Tour with Local Specialties & Wine Tasting                               $96.13                                          
+                                                 French Riviera Famous Cities Scoot Coupe Self Drive Tour from Nice                                     $96.13                                          
+                      Paris           Premium    Skip the Line Ticket: Eiffel Tower Summit Priority Access with Host                                   $102.99                                          
+                                                 Gourmet Dinner & Sightseeing Cruise                                                                   $114.99                                          
+                                                 Bateaux Parisiens Seine River Gourmet Dinner & Sightseeing Cruise                                     $162.73                                          
+                                                 Normandy D-Day Beaches & American Cemetery Trip from Paris                                            $439.43                                          
+                                      Regular    Bateaux Parisiens Seine River Cruise                                                                   $75.75                                          
+                                                 Disneyland Paris 1-Day Ticket                                                                          $76.90                                          
+Spain           N/A   Barcelona       Budget     Sunset Jazz Cruise in Barcelona                                                                        $49.95                                          
+                                      Premium    Girona and Dali Museum Small Group Tour with Hotel Pick-up from Barcelona                             $136.76                                          
+                                                 Barcelona in One Day: Sagrada Familia, Park Guell & Old Town with Hotel Pick-up                       $196.96                                          
+                                                 360 degree Barcelona SkyWalk: Old Town Walking, Helicopter flight & Sailing Small Group               $597.76                                          
+                                      Regular    Familia Sagrada Guided Tour                                                                            $70.03                                          
+                                                 Interactive Spanish Cooking Experience in Barcelona                                                    $72.76                                          
+United States   CA    Anahiem         Premium    Disneyland 2-Day Park Hopper Ticket                                                                   $413.79                                          
+                      Helendale       Premium    ATV / UTV Riding - 28-Mile Jackrabbit Tour for 2 Riders                                               $760.22                                          
+                      Joshua Tree     Premium    Beginner Group Rock Climbing in Joshua Tree National Park                                             $275.56                                          
+                      Mecca           Premium    Earthquake Canyon Express Downhill Bicycle Adventure                                                  $157.63                                          
+                      Newport Beach   Premium    Private Surf Lesson Newport Beach, California                                                         $179.55                                          
+                                                 Private Dolphin and Whale Watching Tour in Newport Beach                                              $492.60                                          
+                      Palm Desert     Premium    San Andreas Fault Jeep Tour from Palm Desert                                                          $197.04                                          
+                      Palm Springs    Budget     Palm Springs On/Off City Tour                                                                          $29.95                                          
+                                                 Palm Springs Art Museum Guided Tour                                                                    $39.95                                          
+                                                 Modern & More Bike Tours Palm Springs                                                                  $49.95                                          
+                                      Premium    Private French-Inspired Cooking Class with a Fun Local in Palm Springs, CA                            $139.24                                          
+                                      Regular    Palm Springs Windmill Tours                                                                            $69.23                                          
+
+41 rows selected.
+
+SQL> spool off
