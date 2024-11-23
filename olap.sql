@@ -56,12 +56,13 @@ order by name, category;
 
 -- revision 2:
 -- adding Grand total and '.......' to null category rows
-select case when name is null and category is null then 'Grand Total'
-            else initcap(name)
-	   end "Publisher", 
-	   case when category is null then '..........'
-	        else initcap(category)
-	   end "Category", count(*) "# of Books"
-from publisher join books using (pubid)
+select 
+	case when name is null and category is null then 'Grand Total'
+        else initcap(name)
+	   	end "Publisher", 
+	case when category is null then '..........'
+	    else initcap(category)
+		end "Category", count(*) "# of Books"
+	from publisher join books using (pubid)
 group by rollup (name, category)
 order by name, category;
