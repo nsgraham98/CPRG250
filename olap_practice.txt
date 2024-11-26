@@ -1,0 +1,110 @@
+SQL> 
+SQL> -- q1
+SQL> -- List all authors and the value of the orders associated with the books
+SQL> -- that they wrote. Author's get a 1% commission based on the value of
+SQL> -- the sales. Sum the value of their commissions and totals in each
+SQL> -- column. Notice the presence of a total for all authors. You can use
+SQL> -- grouping sets to solve this problem. Carefully note the formatting of
+SQL> -- the resultant table. Sort by author firstname and lastname.
+SQL> 
+SQL> Column "Commission" format A10
+SQL> select
+  2      initcap(a.fname || ' ' || a.lname) as "Author Name",
+  3      to_char(sum(oi.paideach * oi.quantity), '$9990.00') as "Value",
+  4      to_char((sum(oi.paideach * oi.quantity) * 0.01), '$9990.00') as "Commission"
+  5  from
+  6      author a
+  7      join bookauthor ba using (authorid)
+  8      join books b on ba.isbn = b.isbn
+  9      join orderitems oi on b.isbn = oi.isbn
+ 10      join orders o on oi.order# = o.order#
+ 11  group by
+ 12      grouping sets(
+ 13          (a.fname || ' ' || a.lname),
+ 14          ()
+ 15      )
+ 16  order by 1;
+
+Author Name           Value     Commission                                                                                                                      
+--------------------- --------- ----------                                                                                                                      
+Jack Baker              $672.30     $6.72                                                                                                                       
+James Austin            $608.10     $6.08                                                                                                                       
+Janice Jones            $219.00     $2.19                                                                                                                       
+Juan Adams              $391.65     $3.92                                                                                                                       
+Lisa Porter              $30.95     $0.31                                                                                                                       
+Lisa White               $89.95     $0.90                                                                                                                       
+Oscar Fields            $512.70     $5.13                                                                                                                       
+Robert Robinson         $548.50     $5.49                                                                                                                       
+Sam Smith                $30.95     $0.31                                                                                                                       
+Tina Peterson           $391.65     $3.92                                                                                                                       
+William White            $81.95     $0.82                                                                                                                       
+                       $3577.70    $35.78                                                                                                                       
+
+12 rows selected.
+
+SQL> 
+SQL> -- q2
+SQL> -- What is the average profit per book for each publisher? Include an
+SQL> -- average profit for all publishers.
+SQL> 
+SQL> column "Avg Profit" format A10
+SQL> select
+  2      initcap(p.name) as "Publisher",
+  3      to_char(avg(b.retail - b.cost), '$990.00') as "Avg Profit"
+  4  from
+  5      publisher p
+  6      join books b using (pubid)
+  7  group by
+  8      grouping sets(
+  9          p.name,
+ 10          ()
+ 11      )
+ 12  order by 1;
+
+Publisher               Avg Profit                                                                                                                              
+----------------------- ----------                                                                                                                              
+American Publishing       $18.82                                                                                                                                
+Printing Is Us            $12.18                                                                                                                                
+Publish Our Way           $19.38                                                                                                                                
+Reading Materials Inc.    $10.38                                                                                                                                
+Reed-N-Rite               $21.23                                                                                                                                
+                          $16.05                                                                                                                                
+
+6 rows selected.
+
+SQL> 
+SQL> -- Modify the previous query so that a title of `Total" appears for the
+SQL> -- final total.
+SQL> -- Hint: Use a Case to return `Total' when publisher name is null.
+SQL> 
+SQL> column "Avg Profit" format A10
+SQL> select
+  2      case when
+  3          p.name is null
+  4              then 'Total'
+  5          else initcap(p.name)
+  6      end as "Publisher",
+  7      to_char(avg(b.retail - b.cost), '$990.00') as "Avg Profit"
+  8  from
+  9      publisher p
+ 10      join books b using (pubid)
+ 11  group by
+ 12      grouping sets(
+ 13          p.name,
+ 14          ()
+ 15      )
+ 16  order by 1;
+
+Publisher               Avg Profit                                                                                                                              
+----------------------- ----------                                                                                                                              
+American Publishing       $18.82                                                                                                                                
+Printing Is Us            $12.18                                                                                                                                
+Publish Our Way           $19.38                                                                                                                                
+Reading Materials Inc.    $10.38                                                                                                                                
+Reed-N-Rite               $21.23                                                                                                                                
+Total                     $16.05                                                                                                                                
+
+6 rows selected.
+
+SQL> 
+SQL> spool off

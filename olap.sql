@@ -62,7 +62,8 @@ select
 	   	end "Publisher", 
 	case when category is null then '..........'
 	    else initcap(category)
-		end "Category", count(*) "# of Books"
+		end "Category", 
+	count(*) "# of Books"
 	from publisher join books using (pubid)
 group by rollup (name, category)
 order by name, category;
