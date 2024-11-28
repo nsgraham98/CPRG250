@@ -156,3 +156,49 @@ where order# in
 		(select max(count(*))
 		from orderitems
 		 group by order#));
+
+-- slide 28
+-- Correlated Subqueries versus Uncorrelated Subqueries
+-- Show the most expensive book published by each publisher.
+
+-- uncorrelated:
+select name, title, retail
+from publisher
+    join books using(pubid)
+where (name, retail) in
+    (select name, max(retail)
+    from publisher
+        join books using (pubid)
+    group by name);
+
+-- correlated
+select name, title, retail
+from books b, publisher p
+where p.pubid = b.pubid and 
+    b.retail = 
+        (select max(retail)
+        from books bi 
+        where bi.pubid = b.pubid);
+
+-- slide 37
+-- “TOP-N” Analysis and Pagination
+-- Top 5 most profitable books using Oracle 12c
+select title, retail-cost profit
+from books
+order by profit desc
+fetch first 5 rows only;
+
+-- slide 38
+-- extract 1st page of customers (based on alphabetic order)
+-- assuming 5 rows per form page
+select firstname, lastname
+from customers
+order by 2,1
+fetch first 5 rows only;
+-- extract 2nd page of customers (based on alphabetic order)
+-- assuming 5 rows per form page
+select firstname, lastname
+from customers
+order by 2,1
+offset 5 rows
+fetch next 5 rows only;
